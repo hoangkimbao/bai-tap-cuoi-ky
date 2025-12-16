@@ -1,0 +1,208 @@
+    <!DOCTYPE html>
+    {% load static %}
+    <html lang="vn">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Dự Án Quản Lý Garage">
+
+        <link rel="stylesheet" href="{%static 'css/bootstrap.min.css'%}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="{% static 'css/tiny-slider.css'%}">
+        <link rel="stylesheet" href="{% static 'css/style.css'%}">
+        <title>Quản Lý Garage </title>
+    </head>
+    <body>
+    <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Garage navigation bar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Car Garage</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsGarage" aria-controls="navbarsGarage" aria-expanded="false" aria-label="Toggle navigation">
+                <spa class="navbar-toggler-icon"></spa>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsGarage">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item active">
+                        <a href="{% url 'index' %}" class="nav-link">Trang Chủ</a>
+                    </li>
+                    {% if not user.is_staff %}
+                        <li class="nav-item dropdown">
+                         <a class="nav-link dropdown-toggle" href="{% url 'services' %}" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dịch Vụ</a>
+                            <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                {% for dv in all_global_services %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ dv.get_absolute_url }}">
+                                            {{ dv.name }} </a>
+                                    </li>
+                                {% endfor %}
+                                <li><hr class="dropdown-divider"></li>
+                
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'parts_list' %}">
+                                Phụ Tùng Ô Tô
+                            </a>
+                        </li>
+                        <li><a href="{% url 'contact' %}" class="nav-link">Liên Hệ</a></li>
+                        <li><a href="{% url 'create_appointment' %}" class="nav-link">Đặt Lịch</a></li>
+                    {% endif %}
+                
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{% static 'images/user.svg' %}" alt="User" class="me-2" style="width: 20px;">
+                                {% if user.is_staff %}Admin: {% else %}Chào, {% endif %}{{ user.username }}!
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'my_profile' %}">Thông tin của tôi</a></li>
+                                {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li> {# Divider for admin links #}
+                                    <li><a class="dropdown-item" href="/admin/">Trang Admin Django</a></li> {# New admin link #}
+                                    <li><a class="dropdown-item" href="{% url 'all_appointments' %}">Quản Lý Lịch Hẹn</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'manage_parts' %}">Quản lý Phụ tùng</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'revenue_dashboard' %}">Quản Lý Doanh Thu</a></li>
+                                {% else %}
+                                    <!-- Regular User Links -->
+                                    <li><a class="dropdown-item" href="{% url 'my_cars' %}">Xe của tôi</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'my_appointments' %}">Lịch hẹn của tôi</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Đăng Nhập</a>
+                         </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Đăng Ký</a>
+                         </li>
+                    {% endif %}
+                
+                    <li class="nav-item">
+                        <a href="{% url 'cart_detail' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% if cart|length > 0 %}
+                                <span class="badge bg-danger rounded-pill" style="vertical-align: top; margin-left: -5px;">{{ cart|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+ <div class="container-fluid" style="background-color: #808080; padding-bottom: 10px;">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+    {% block search_bar %}
+   <div class="custom-search-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8"> <form action="{% url 'search' %}" method="GET" class="search-box-auto911">
+
+                    <input type="text" name="q" class="search-input" placeholder="Nhập từ khóa tìm kiếm...">
+
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+       {% endblock %}
+    {% block content %}
+    
+    {% endblock %}
+
+    <br/>
+
+   <br/><footer class="site-footer">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <h3 class="footer-heading mb-4">CAR GARAGE</h3>
+                <p class="text-secondary">
+                    Car Garage cam kết nỗ lực hết mình nhằm cung cấp sản phẩm và dịch vụ đúng với những giá trị mà khách hàng mong đợi.
+                </p>
+                <ul class="list-unstyled contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                        36/9/12/7 Nguyễn Triệu Luật, khu phố 3, Phường Tân Tạo, Quận Bình Tân, Thành Phố Hồ Chí Minh
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt text-danger me-2"></i>
+                        0977 2245 04
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope text-danger me-2"></i>
+                        kimbao10c4@gmail.com
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                <h3 class="footer-heading mb-4">LIÊN KẾT</h3>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{% url 'index' %}">Trang chủ</a></li>
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="{% url 'contact' %}">Liên hệ</a></li>
+                    <li><a href="#">Chính sách bảo hành</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h3 class="footer-heading mb-4">DỊCH VỤ</h3>
+                <ul class="list-unstyled footer-links">
+                    {% for service in all_global_services|slice:":5" %}
+                        <li><a href="{{ service.get_absolute_url }}">{{ service.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h3 class="footer-heading mb-4">KẾT NỐI</h3>
+                <p class="text-secondary">Theo dõi chúng tôi để nhận ưu đãi mới nhất.</p>
+                <div class="social-icons mt-3">
+                    <a href="https://www.facebook.com/hoangkimbao.2004" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/@baohoangkim4988" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.tiktok.com/@_15thang5" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row pt-4 mt-5 text-center border-top border-secondary">
+            <div class="col-md-12">
+                <p class="text-secondary mb-0">
+                    Copyright &copy; 2025 All rights reserved | Thiết kế bởi <span class="text-danger">Hoàng Kim Bảo DH52200356</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<a href="tel:0969035979" class="float-call-btn">
+    <i class="fas fa-phone-alt"></i> 0969 03 59 79
+</a>
+    <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'js/tiny-slider.js'%}"></script>
+    <script src="{% static 'js/custom.js'%}"></script>
+    </body>
+    </html>

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+Thống kê Doanh thu
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Bảng điều khiển Doanh thu</h1>
+
+    <!-- Summary Cards -->
+    <div class="row">
+        <!-- Doanh thu hôm nay -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Doanh thu Hôm nay</h5>
+                    <p class="card-text fs-2 fw-bold">{{ total_revenue_today|floatformat:0|intcomma }} VNĐ</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Dịch vụ: {{ services_revenue_today|floatformat:0|intcomma }} VNĐ</small><br>
+                    <small class="text-muted">Phụ tùng: {{ parts_revenue_today|floatformat:0|intcomma }} VNĐ</small>
+                </div>
+            </div>
+        </div>
+        <!-- Doanh thu tháng này -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Doanh thu Tháng này</h5>
+                    <p class="card-text fs-2 fw-bold">{{ total_revenue_this_month|floatformat:0|intcomma }} VNĐ</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Dịch vụ: {{ services_revenue_this_month|floatformat:0|intcomma }} VNĐ</small><br>
+                    <small class="text-muted">Phụ tùng: {{ parts_revenue_this_month|floatformat:0|intcomma }} VNĐ</small>
+                </div>
+            </div>
+        </div>
+        <!-- Tổng doanh thu -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Tổng Doanh thu</h5>
+                    <p class="card-text fs-2 fw-bold">{{ total_revenue|floatformat:0|intcomma }} VNĐ</p>
+                </div>
+                 <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Dịch vụ: {{ services_revenue_total|floatformat:0|intcomma }} VNĐ</small><br>
+                    <small class="text-muted">Phụ tùng: {{ parts_revenue_total|floatformat:0|intcomma }} VNĐ</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Biểu đồ Doanh thu Theo tháng</h5>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Thêm CDN của Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+    // Lấy dữ liệu từ Django context và parse nó
+    const chartLabels = JSON.parse('{{ chart_labels|safe }}');
+    const chartData = JSON.parse('{{ chart_data|safe }}');
+
+    const revenueChart = new Chart(ctx, {
+        type: 'bar', // Loại biểu đồ: bar, line, pie,...
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: chartData,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        // Định dạng lại số trên trục Y cho dễ đọc
+                        callback: function(value, index, values) {
+                            return new Intl.NumberFormat('vi-VN').format(value) + ' VNĐ';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Quản lý Lịch Hẹn Toàn Hệ Thống</h2>
+
+    {% if appointments %}
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Ngày Hẹn</th>
+                        <th scope="col">Khách Hàng</th>
+                        <th scope="col">Thông tin xe</th>
+                        <th scope="col">Dịch Vụ Yêu Cầu</th>
+                        <th scope="col" class="text-center">Trạng Thái</th>
+                        <th scope="col" class="text-center">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                        <tr>
+                            <td class="fw-bold">{{ appt.appointment_date|date:"d/m/Y, H:i" }}</td>
+                            <td>{{ appt.customer.username }} ({{ appt.customer.email }})</td>
+                            <td>{{ appt.car }}</td>
+                            <td>
+                                {% for service in appt.services.all %}
+                                    <div>- {{ service.name }}</div>
+                                {% endfor %}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill fs-6
+                                    {% if appt.status == 'pending' %} bg-warning text-dark 
+                                    {% elif appt.status == 'confirmed' %} bg-success
+                                    {% elif appt.status == 'in_progress' %} bg-info text-dark
+                                    {% elif appt.status == 'completed' %} bg-secondary
+                                    {% elif appt.status == 'cancelled' %} bg-danger
+                                    {% endif %}">
+                                    {{ appt.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <!-- Button to trigger modal -->
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#actionModal-{{ appt.id }}">
+                                    Hành động
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="actionModal-{{ appt.id }}" tabindex="-1" aria-labelledby="actionModalLabel-{{ appt.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="actionModalLabel-{{ appt.id }}">
+                                                    Cập nhật lịch hẹn: {{ appt.appointment_date|date:"d/m/Y" }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-start">
+                                                <p><strong>Khách hàng:</strong> {{ appt.customer.username }}</p>
+                                                <p><strong>Xe:</strong> {{ appt.car }}</p>
+                                                <p><strong>Trạng thái hiện tại:</strong> {{ appt.get_status_display }}</p>
+                                                <hr>
+                                                <p class="fw-bold">Chọn hành động mới:</p>
+                                                <div class="d-grid gap-2">
+                                                    <a href="{% url 'update_appointment_status' appt.id 'confirmed' %}" class="btn btn-success">Xác nhận lịch</a>
+                                                    <a href="{% url 'update_appointment_status' appt.id 'in_progress' %}" class="btn btn-info">Bắt đầu sửa chữa</a>
+                                                    <a href="{% url 'update_appointment_status' appt.id 'completed' %}" class="btn btn-secondary">Hoàn thành</a>
+                                                    <a href="{% url 'update_appointment_status' appt.id 'cancelled' %}" class="btn btn-danger">Hủy bỏ lịch</a>
+                                                    <a href="{% url 'update_appointment_status' appt.id 'pending' %}" class="btn btn-dark">Chuyển về "Chờ xử lý"</a>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            Chưa có lịch hẹn nào trong hệ thống.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

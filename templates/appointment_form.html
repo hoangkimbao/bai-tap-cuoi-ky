@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block search_bar %}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; padding-bottom: 5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <h2 class="mb-4 text-center fw-bold">Đặt Lịch Hẹn Sửa Chữa</h2>
+
+                    {% if form.fields.car.queryset.exists %}
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                {{ form.car.label_tag }}
+                                {{ form.car }}
+                                {% if form.car.errors %}
+                                    <div class="text-danger small mt-1">{{ form.car.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">{{ form.services.label }}</label>
+                                <div class="card card-body p-3" style="max-height: 200px; overflow-y: auto;">
+                                    {% for checkbox in form.services %}
+                                        <div class="form-check">
+                                            {{ checkbox.tag }}
+                                            <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                                {{ checkbox.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if form.services.errors %}
+                                    <div class="text-danger small mt-1">{{ form.services.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.appointment_date.label_tag }}
+                                {{ form.appointment_date }}
+                                {% if form.appointment_date.errors %}
+                                    <div class="text-danger small mt-1">{{ form.appointment_date.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.notes.label_tag }}
+                                {{ form.notes }}
+                                 {% if form.notes.errors %}
+                                    <div class="text-danger small mt-1">{{ form.notes.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg mt-3">Xác Nhận Đặt Lịch</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <h4 class="alert-heading">Bạn chưa có xe nào!</h4>
+                            <p>Vui lòng thêm thông tin xe của bạn trước khi đặt lịch hẹn.</p>
+                            <hr>
+                            <a href="{% url 'my_cars'%}" class="btn btn-primary">Thêm Xe Ngay</a> {# This link needs to be implemented later #}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

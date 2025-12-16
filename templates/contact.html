@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; padding-bottom: 5rem;">
+    <div class="row">
+
+        <div class="col-lg-6">
+            <h2>Thông tin</h2>
+            <p><strong>CTY TNHH TM DV...</strong><br>
+            36/9/12/7 Nguyễn Triệu Luật, khu phố 3, Phường Tân Tạo, Quận Bình Tân, Thành Phố Hồ Chí Minh</p>
+            <hr>
+            <p><strong>SỐ ĐIỆN THOẠI:</strong><br>
+            (84) 977224504<br>
+            Hotline: 097 722 45 04</p>
+            <hr>
+            <p><strong>EMAIL:</strong><br>
+            kimbao10c4@gmail.com</p>
+
+            <div class="mt-4">
+                </div>
+        </div>
+
+        <div class="col-lg-6">
+            <h2>Form Liên Hệ:</h2>
+            <p>Hãy gửi thắc mắc của bạn cho chúng tôi.</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-primary mt-3">Gửi</button>
+            </form>
+        </div>
+
+
+
+    </div>
+</div>
+{% endblock %}

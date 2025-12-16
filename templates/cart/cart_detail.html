@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Giỏ hàng của bạn</h1>
+
+    {% if cart|length > 0 %}
+        <div class="table-responsive shadow-sm">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" style="width: 40%;">Sản phẩm</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Đơn giá</th>
+                        <th scope="col">Tổng cộng</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td>{{ item.part.name }}</td>
+                            <td>
+                                {% if item.part.image %}
+                                    <img src="{{ item.part.image }}" alt="{{ item.part.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/50x50?text=No+Image" alt="No image" style="border-radius: 5px;">
+                                {% endif %}
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price|floatformat:0 }}₫</td>
+                            <td>{{ item.total_price|floatformat:0 }}₫</td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item.part.id %}" class="btn btn-danger btn-sm" title="Xóa sản phẩm">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="4" class="text-end fw-bold fs-5">Tổng cộng tạm tính:</td>
+                        <td class="fw-bold fs-5 text-danger">{{ cart.get_total_price|floatformat:0 }}₫</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="text-end mt-4">
+            <a href="{% url 'parts_list' %}" class="btn btn-secondary">Tiếp tục mua sắm</a>
+            <a href="{% url 'order_create' %}" class="btn btn-primary">Tiến hành đặt hàng</a>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Giỏ hàng của bạn đang trống. <a href="{% url 'parts_list' %}" class="alert-link">Hãy bắt đầu mua sắm</a>!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{# Ẩn thanh tìm kiếm cho gọn #}
+{% block search_bar %}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 100px 0;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-5 text-center">
+
+                    <h2 class="mb-3 fw-bold">Xác thực tài khoản</h2>
+                    <p class="text-muted mb-4">
+                        Chúng tôi đã gửi một mã 6 số đến email của bạn.<br>
+                        Vui lòng kiểm tra hộp thư (cả mục Spam).
+                    </p>
+
+                    {% if error %}
+                        <div class="alert alert-danger fade show" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="form-floating mb-4">
+                            <input type="text" name="otp" class="form-control text-center fs-4"
+                                   id="otpInput" placeholder="######" maxlength="6" required
+                                   style="letter-spacing: 5px; font-weight: bold;">
+                            <label for="otpInput">Nhập mã 6 số</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            Kích Hoạt Ngay
+                        </button>
+                    </form>
+
+                    <div class="mt-4">
+                        <small class="text-muted">Chưa nhận được mã? <a href="{% url 'register' %}">Đăng ký lại</a></small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

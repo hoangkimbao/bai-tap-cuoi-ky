@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Kết quả thanh toán{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if success %}
+        <div class="alert alert-success text-center" role="alert">
+            <h4 class="alert-heading">Thanh toán thành công!</h4>
+            <p>{{ message }}</p>
+            <p>Mã đơn hàng của bạn là: <strong>#{{ order.id }}</strong></p>
+            <hr>
+            <p class="mb-0">Cảm ơn bạn đã tin tưởng và mua hàng. Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.</p>
+            <div class="mt-4">
+                <a href="{% url 'index' %}" class="btn btn-primary">Về trang chủ</a>
+                {# Thêm link tới trang chi tiết đơn hàng nếu có #}
+                {# <a href="{% url 'order_detail' order.id %}" class="btn btn-info">Xem chi tiết đơn hàng</a> #}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            <h4 class="alert-heading">Thanh toán thất bại!</h4>
+            <p>{{ error_message }}</p>
+            <hr>
+            <p class="mb-0">Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng kiểm tra lại thông tin hoặc thử lại sau.</p>
+            <div class="mt-4">
+                <a href="{% url 'order_create' %}" class="btn btn-warning">Thử lại thanh toán</a>
+                <a href="{% url 'index' %}" class="btn btn-secondary">Về trang chủ</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

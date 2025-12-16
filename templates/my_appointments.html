@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Lịch Hẹn Của Tôi</h2>
+
+    {% if appointments %}
+        <div class="list-group">
+            {% for appt in appointments %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 border rounded shadow-sm">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1 fw-bold text-primary">Lịch hẹn ngày: {{ appt.appointment_date|date:"d/m/Y, H:i" }}</h5>
+                        <span class="badge rounded-pill 
+                            {% if appt.status == 'pending' %} bg-warning text-dark 
+                            {% elif appt.status == 'confirmed' %} bg-success
+                            {% elif appt.status == 'in_progress' %} bg-info text-dark
+                            {% elif appt.status == 'completed' %} bg-secondary
+                            {% elif appt.status == 'cancelled' %} bg-danger
+                            {% endif %}">
+                            {{ appt.get_status_display }}
+                        </span>
+                    </div>
+                    <p class="mb-1"><strong>Xe:</strong> {{ appt.car.brand }} {{ appt.car.model }} - Biển số: {{ appt.car.license_plate }}</p>
+                    <p class="mb-1"><strong>Dịch vụ:</strong> 
+                        {% for service in appt.services.all %}
+                            {{ service.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    {% if appt.notes %}
+                        <p class="mb-0 mt-2"><small><strong>Ghi chú:</strong> {{ appt.notes }}</small></p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 border rounded bg-light">
+            <p>Bạn chưa có lịch hẹn nào.</p>
+            <a href="{% url 'create_appointment' %}" class="btn btn-primary">Đặt lịch hẹn ngay</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

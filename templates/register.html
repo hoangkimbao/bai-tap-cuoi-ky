@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block search_bar %}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; padding-bottom: 5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="text-center fw-bold mb-4">Tạo Tài Khoản</h2>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Lỗi:</strong> Vui lòng kiểm tra lại các thông tin bạn đã nhập.
+                            </div>
+                        {% endif %}
+
+                        {{ form.as_p }}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg mt-3">Đăng Ký</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p>Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

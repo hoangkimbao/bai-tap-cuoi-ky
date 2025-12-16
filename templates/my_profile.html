@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Thông Tin Cá Nhân</h2>
+
+    <div class="row">
+        <!-- Cột hiển thị thông tin -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm p-4">
+                <img src="{% if user.userprofile.avatar %}{{ user.userprofile.avatar.url }}{% else %}{% static 'images/user.svg' %}{% endif %}" 
+                     alt="Ảnh đại diện" 
+                     class="img-fluid rounded-circle mx-auto mb-3" 
+                     style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #ddd;">
+                
+                <h4 class="card-title">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+            </div>
+        </div>
+
+        <!-- Cột form chỉnh sửa -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4 border-bottom pb-2">Cập nhật thông tin</h5>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ u_form.username.label }}</label>
+                            {{ u_form.username }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ u_form.email.label }}</label>
+                            {{ u_form.email }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ u_form.first_name.label }}</label>
+                                {{ u_form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ u_form.last_name.label }}</label>
+                                {{ u_form.last_name }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ p_form.avatar.label }}</label>
+                            {{ p_form.avatar }}
+                            {% if p_form.avatar.help_text %}
+                                <small class="form-text text-muted">{{ p_form.avatar.help_text }}</small>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Lưu Thay Đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

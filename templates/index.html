@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="hero">
+    <div class="col-lg-12 hero-image-column"
+         style="background-image: url('{% static 'images/trangchu.jpg' %}')">
+    <div class="container">
+        <div class="row justify-content-between align-items-stretch">
+
+            <div class="col-lg-5 hero-text-column" style="background: transparent;">
+                <div class="intro-excerpt">
+                    <h1>Quản lý Garage <span class="d-block">Chuyên nghiệp</span></h1>
+                    <p class="mb-4">
+                        Dịch vụ hàng đầu với đội ngũ kỹ thuật viên lành nghề.
+                    </p>
+                    <p>
+                        <a href="{% url 'services' %}" class="btn btn-secondary me-2">Đặt lịch ngay</a>
+                        <a href="{% url 'services' %}" class="btn btn-white-outline">Xem Dịch vụ</a>
+                    </p>
+                </div>
+            </div>
+<!--            <div class="col-lg-7 hero-image-column"-->
+<!--                 style="background-image: url('{% static 'images/trangchu.jpg' %}')">-->
+
+<!--                </div> -->
+        </div> </div>
+</div>
+
+</div>
+
+{% endblock %}

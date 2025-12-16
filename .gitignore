@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Database (Nên ignore sqlite nếu muốn làm chuẩn, nhưng với bài thi nộp code thì có thể giữ hoặc bỏ tùy thầy)
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/

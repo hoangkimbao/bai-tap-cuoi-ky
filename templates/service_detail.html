@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ service.name }} - Dịch Vụ | Car Garage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'services' %}">Dịch vụ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ service.name }}</li>
+                </ol>
+            </nav>
+
+            <article>
+                <header class="mb-4">
+                    <!-- Tên dịch vụ là tiêu đề chính (H1) -->
+                    <h1 class="fw-bolder mb-1">{{ service.name }}</h1>
+                    
+                    <!-- Thông tin phụ như giá, nếu có -->
+                    {% if service.price %}
+                        <div class="text-muted fst-italic mb-2">Chi phí dự kiến: {{ service.price|floatformat:"0" }} VNĐ</div>
+                    {% endif %}
+                </header>
+
+                <!-- Có thể thêm ảnh đại diện cho dịch vụ ở đây nếu muốn -->
+                <!-- <figure class="mb-4"><img class="img-fluid rounded" src="..." alt="{{ service.name }}"></figure> -->
+                
+                <!-- Nội dung chi tiết của dịch vụ -->
+                <section class="mb-5 fs-5">
+                    {{ service.description|safe|linebreaks }}
+                </section>
+
+                <!-- Nút kêu gọi hành động -->
+                {% if service.cta_text %}
+                <div class="text-center">
+                    <a href="{% url 'create_appointment' %}" class="btn btn-primary btn-lg">
+                        {{ service.cta_text }}
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </article>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

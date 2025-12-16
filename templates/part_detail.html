@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb bg-light p-3 rounded">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'parts_list' %}">Phụ Tùng Ô Tô</a></li>
+                    {% if part.category %}
+                        <li class="breadcrumb-item"><a href="{% url 'parts_by_category' part.category.id %}">{{ part.category.name }}</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ part.name }}</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <div class="position-relative p-3 d-flex align-items-center justify-content-center" style="min-height: 300px; background-color: #f8f9fa;">
+                            {% if part.image %}
+                                <img src="{{ part.image }}" class="img-fluid rounded" alt="{{ part.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/400x400?text=No+Image" class="img-fluid rounded" style="opacity: 0.5;">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body p-4">
+                            <h1 class="card-title fw-bold mb-3">{{ part.name }}</h1>
+                            
+                            {% if part.part_number %}
+                                <p class="text-muted mb-2">Mã sản phẩm: <strong>{{ part.part_number }}</strong></p>
+                            {% endif %}
+                            {% if part.brand %}
+                                <p class="text-muted mb-2">Thương hiệu: <strong>{{ part.brand }}</strong></p>
+                            {% endif %}
+                            {% if part.category %}
+                                <p class="text-muted mb-2">Loại phụ tùng: <strong>{{ part.category.name }}</strong></p>
+                            {% endif %}
+                            {% if part.quantity %}
+                                <p class="text-muted mb-3">Số lượng còn: <strong>{{ part.quantity }}</strong></p>
+                            {% endif %}
+
+                            <h2 class="text-danger fw-bold my-4">
+                                {% if part.price %}{{ part.price|floatformat:0 }}₫{% else %}Liên hệ{% endif %}
+                            </h2>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-lg">
+                                    <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
+                                </button>
+                                <button class="btn btn-outline-secondary btn-lg">Tư vấn thêm</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm border-0 mt-5">
+                <div class="card-header bg-light fw-bold">Mô tả sản phẩm</div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {# Assuming 'description' field might be added to Part model later, or just fill with static text for now #}
+                        Hiện tại không có mô tả chi tiết cho sản phẩm này. Vui lòng liên hệ để biết thêm thông tin.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
