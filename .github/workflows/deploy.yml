@@ -1,0 +1,14 @@
+name: CI/CD Deploy to Render
+
+on:
+  push:
+    branches:
+      - main # Kịch bản này chỉ chạy khi có code mới ở nhánh Main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy
+        # Dùng lệnh curl để gọi "chìa khóa" bạn vừa cất trên GitHub
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
