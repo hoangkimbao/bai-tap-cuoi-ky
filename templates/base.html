@@ -21,11 +21,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarsGarage">
                 <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                    <li class="nav-item active">
+                    <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                         <a href="{% url 'index' %}" class="nav-link">Trang Chủ</a>
                     </li>
                     {% if not user.is_staff %}
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown {% if request.resolver_match.url_name == 'services' or request.resolver_match.url_name == 'service_detail' %}active{% endif %}">
                          <a class="nav-link dropdown-toggle" href="{% url 'services' %}" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dịch Vụ</a>
                             <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
                                 {% for dv in all_global_services %}
@@ -38,13 +38,17 @@
                 
                             </ul>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item {% if request.resolver_match.url_name == 'parts_list' or request.resolver_match.url_name == 'part_detail' or request.resolver_match.url_name == 'parts_by_category' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'parts_list' %}">
                                 Phụ Tùng Ô Tô
                             </a>
                         </li>
-                        <li><a href="{% url 'contact' %}" class="nav-link">Liên Hệ</a></li>
-                        <li><a href="{% url 'create_appointment' %}" class="nav-link">Đặt Lịch</a></li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                            <a href="{% url 'contact' %}" class="nav-link">Liên Hệ</a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'create_appointment' %}active{% endif %}">
+                            <a href="{% url 'create_appointment' %}" class="nav-link">Đặt Lịch</a>
+                        </li>
                     {% endif %}
                 
                     {% if user.is_authenticated %}
