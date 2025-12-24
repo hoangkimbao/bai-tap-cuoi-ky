@@ -72,14 +72,39 @@ a {
         -webkit-transition: .15s all ease-out;
         -o-transition: .15s all ease-out;
         transition: .15s all ease-out; } }
-    .custom-navbar .custom-navbar-nav li a:hover {
-      opacity: 1; }
-      .custom-navbar .custom-navbar-nav li a:hover:before {
-        width: calc(100% - 16px); }
-  .custom-navbar .custom-navbar-nav li.active a {
-    opacity: 1; }
-    .custom-navbar .custom-navbar-nav li.active a:before {
-      width: calc(100% - 16px); }
+/* ----- CHỈ GIỮ HIỆU ỨNG DI CHUỘT (HOVER) CHO TOÀN BỘ MENU ----- */
+.custom-navbar .custom-navbar-nav li a {
+    position: relative;
+    opacity: 0.5; /* Mặc định mờ mờ như nhau */
+    transition: 0.3s all ease;
+}
+
+.custom-navbar .custom-navbar-nav li a:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 8px;
+    right: 8px;
+    background: #cccccc;
+    height: 5px;
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.15s all ease-out;
+}
+
+/* Tất cả các nút chỉ hiện gạch ngang khi di chuột vào */
+.custom-navbar .custom-navbar-nav li a:hover {
+    opacity: 1;
+}
+
+.custom-navbar .custom-navbar-nav li a:hover:before {
+    width: calc(100% - 16px);
+    opacity: 1;
+    visibility: visible;
+}
+/* ----------------------------------------------------------- */
+
   .custom-navbar .custom-navbar-cta {
     margin-left: 0 !important;
     -webkit-box-orient: horizontal;
