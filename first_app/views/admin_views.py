@@ -32,10 +32,13 @@ def all_appointments(request):
     return render(request, 'all_appointments.html', context)
 
 
+from django.conf import settings
+from django.core.mail import send_mail
+
 @user_passes_test(staff_required)
 def update_appointment_status(request, appt_id, new_status):
     """
-    Cập nhật trạng thái của một lịch hẹn.
+    Cập nhật trạng thái của một lịch hẹn và gửi email thông báo.
     """
     appointment = get_object_or_404(Appointment, id=appt_id)
 
@@ -44,7 +47,26 @@ def update_appointment_status(request, appt_id, new_status):
     if new_status in valid_statuses:
         appointment.status = new_status
         appointment.save()
-        messages.success(request, f"Đã cập nhật trạng thái lịch hẹn thành '{appointment.get_status_display()}'.")
+        
+        # Gửi email thông báo cho khách hàng
+        try:
+            subject = f'Cập nhật trạng thái lịch hẹn tại Garage - {appointment.id}'
+            message = f'Chào {appointment.customer.username},\n\n' \
+                      f'Trạng thái lịch hẹn của bạn cho xe {appointment.car.license_plate} ' \
+                      f'đã được cập nhật thành: {appointment.get_status_display()}.\n\n' \
+                      f'Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!'
+            
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [appointment.customer.email],
+                fail_silently=True,
+            )
+        except:
+            pass
+            
+        messages.success(request, f"Đã cập nhật trạng thái và gửi mail cho khách hàng.")
     else:
         messages.error(request, "Trạng thái cập nhật không hợp lệ.")
 

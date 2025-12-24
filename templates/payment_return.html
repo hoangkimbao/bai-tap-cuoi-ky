@@ -1,33 +1,94 @@
 {% extends 'base.html' %}
-
-{% block title %}Kết quả thanh toán{% endblock %}
+{% load humanize %}
 
 {% block content %}
-<div class="container my-5">
-    {% if success %}
-        <div class="alert alert-success text-center" role="alert">
-            <h4 class="alert-heading">Thanh toán thành công!</h4>
-            <p>{{ message }}</p>
-            <p>Mã đơn hàng của bạn là: <strong>#{{ order.id }}</strong></p>
-            <hr>
-            <p class="mb-0">Cảm ơn bạn đã tin tưởng và mua hàng. Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.</p>
-            <div class="mt-4">
-                <a href="{% url 'index' %}" class="btn btn-primary">Về trang chủ</a>
-                {# Thêm link tới trang chi tiết đơn hàng nếu có #}
-                {# <a href="{% url 'order_detail' order.id %}" class="btn btn-info">Xem chi tiết đơn hàng</a> #}
-            </div>
+<div class="container my-5" id="invoice-area">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h3 class="mb-0">Kết Quả Thanh Toán</h3>
         </div>
-    {% else %}
-        <div class="alert alert-danger text-center" role="alert">
-            <h4 class="alert-heading">Thanh toán thất bại!</h4>
-            <p>{{ error_message }}</p>
-            <hr>
-            <p class="mb-0">Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng kiểm tra lại thông tin hoặc thử lại sau.</p>
-            <div class="mt-4">
-                <a href="{% url 'order_create' %}" class="btn btn-warning">Thử lại thanh toán</a>
-                <a href="{% url 'index' %}" class="btn btn-secondary">Về trang chủ</a>
-            </div>
+        <div class="card-body p-5">
+            {% if success %}
+                <div class="text-center mb-4">
+                    <div class="display-1 text-success mb-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h2 class="text-success">Thanh toán thành công!</h2>
+                    <p class="lead text-muted">{{ message }}</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="alert alert-light border shadow-sm">
+                            <h5 class="alert-heading border-bottom pb-2 mb-3">Thông tin đơn hàng #{{ order.id }}</h5>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Họ tên khách hàng:</div>
+                                <div class="col-6 fw-bold text-end">{{ order.full_name }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Tổng tiền thanh toán:</div>
+                                <div class="col-6 fw-bold text-danger text-end">{{ order.total_price|intcomma }} VNĐ</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Phương thức:</div>
+                                <div class="col-6 fw-bold text-end text-uppercase">{{ order.payment_method }}</div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-6 text-muted">Trạng thái:</div>
+                                <div class="col-6 fw-bold text-success text-end">Đã thanh toán</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4 d-print-none">
+                    <a href="{% url 'index' %}" class="btn btn-outline-primary me-2">
+                        <i class="bi bi-house-door"></i> Về trang chủ
+                    </a>
+                    <button onclick="window.print()" class="btn btn-success">
+                        <i class="bi bi-printer"></i> In Hóa Đơn
+                    </button>
+                </div>
+
+            {% else %}
+                <div class="text-center">
+                    <div class="display-1 text-danger mb-3">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                    <h2 class="text-danger">Thanh toán thất bại</h2>
+                    <p class="text-muted mb-4">{{ error_message }}</p>
+                    
+                    <a href="{% url 'cart_detail' %}" class="btn btn-warning btn-lg">
+                        <i class="bi bi-arrow-counterclockwise"></i> Thử lại
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </div>
 </div>
+
+<style>
+    /* CSS dành riêng cho máy in */
+    @media print {
+        /* Ẩn tất cả mọi thứ */
+        body * {
+            visibility: hidden;
+        }
+        /* Chỉ hiện vùng hóa đơn */
+        #invoice-area, #invoice-area * {
+            visibility: visible;
+        }
+        /* Căn chỉnh lại vị trí */
+        #invoice-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        /* Ẩn các nút bấm khi in */
+        .d-print-none {
+            display: none !important;
+        }
+    }
+</style>
 {% endblock %}

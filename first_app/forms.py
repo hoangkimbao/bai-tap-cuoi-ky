@@ -136,6 +136,32 @@ class AppointmentForm(forms.ModelForm):
             # Filter the 'car' dropdown to only show cars owned by the logged-in user
             self.fields['car'].queryset = Car.objects.filter(owner=user)
 
+    def clean_appointment_date(self):
+        from django.utils import timezone
+        import datetime
+        
+        appointment_date = self.cleaned_data.get('appointment_date')
+        
+        if appointment_date:
+            # 1. Kiểm tra quá khứ
+            if appointment_date < timezone.now():
+                raise forms.ValidationError("Ngày hẹn không được ở quá khứ. Vui lòng chọn thời gian khác!")
+            
+            # 2. Kiểm tra trùng lịch (Giới hạn 3 xe trong vòng 1 tiếng)
+            # Tìm xem có bao nhiêu lịch hẹn trong khoảng thời gian đó (+- 30 phút)
+            start_time = appointment_date - datetime.timedelta(minutes=59)
+            end_time = appointment_date + datetime.timedelta(minutes=59)
+            
+            count = Appointment.objects.filter(
+                appointment_date__range=(start_time, end_time),
+                status__in=['pending', 'confirmed', 'in_progress'] # Chỉ tính những lịch đang hoạt động
+            ).count()
+            
+            if count >= 3:
+                raise forms.ValidationError("Khung giờ này Garage đã quá tải. Vui lòng chọn giờ khác!")
+
+        return appointment_date
+
 # --- FORM 5: THÊM/SỬA XE ---
 class CarForm(forms.ModelForm):
     class Meta:
